@@ -1,0 +1,270 @@
+<html>
+<head>
+	<title>Bracket</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="vendor/jquery.mobile-1.4.4/jquery.mobile-1.4.4.css"/>
+	
+	<script src="vendor/jquery-2.1.1.js" type="text/javascript"></script>
+	<script src="vendor/jquery.mobile-1.4.4/jquery.mobile-1.4.4.js" type="text/javascript"></script>
+	<script src="bracket.js" type="text/javascript"></script>
+	
+	<script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+    <script type="text/javascript" charset="utf-8">
+
+    var pictureSource;   // picture source
+    var destinationType; // sets the format of returned value 
+
+    // Wait for Cordova to connect with the device
+    //
+    document.addEventListener("deviceready",onDeviceReady,false);
+
+    // Cordova is ready to be used!
+    //
+    function onDeviceReady() {
+        pictureSource=navigator.camera.PictureSourceType;
+        destinationType=navigator.camera.DestinationType;
+    }
+
+    // Called when a photo is successfully retrieved
+    //
+    function onPhotoDataSuccess(imageData) {
+      // Uncomment to view the base64 encoded image data
+      // console.log(imageData);
+
+      // Get image handle
+      //
+      var smallImage = document.getElementById('smallImage');
+
+      // Unhide image elements
+      //
+      smallImage.style.display = 'block';
+
+      // Show the captured photo
+      // The inline CSS rules are used to resize the image
+      //
+      smallImage.src = "data:image/jpeg;base64," + imageData;
+    }
+
+    // Called when a photo is successfully retrieved
+    //
+    function onPhotoURISuccess(imageURI) {
+      // Uncomment to view the image file URI 
+      // console.log(imageURI);
+
+      // Get image handle
+      //
+      var largeImage = document.getElementById('largeImage');
+
+      // Unhide image elements
+      //
+      largeImage.style.display = 'block';
+
+      // Show the captured photo
+      // The inline CSS rules are used to resize the image
+      //
+      largeImage.src = imageURI;
+    }
+
+    // A button will call this function
+    //
+    function capturePhoto() {
+      // Take picture using device camera and retrieve image as base64-encoded string
+      navigator.camera.getPicture(onPhotoDataSuccess, onFail, { quality: 50,
+        destinationType: destinationType.DATA_URL });
+    }
+
+    // A button will call this function
+    //
+    function capturePhotoEdit() {
+      // Take picture using device camera, allow edit, and retrieve image as base64-encoded string  
+      navigator.camera.getPicture(onPhotoDataSuccess, onFail, { quality: 20, allowEdit: true,
+        destinationType: destinationType.DATA_URL });
+    }
+
+    // A button will call this function
+    //
+    function getPhoto(source) {
+      // Retrieve image file location from specified source
+      navigator.camera.getPicture(onPhotoURISuccess, onFail, { quality: 50, 
+        destinationType: destinationType.FILE_URI,
+        sourceType: source });
+    }
+
+    // Called if something bad happens.
+    // 
+    function onFail(message) {
+      alert('Failed because: ' + message);
+    }
+
+    </script>	
+	
+</head>
+
+<body>
+<!--
+	<script type="text/javascript">
+		makeBracket(12, 3);
+	</script>
+-->
+
+<!-- Home Screen
+	The welcome screen, options to start advanced or quick
+ -->
+<div id="home" data-role="page">
+	<div data-role="header">
+		<h1>Bracket</h1>
+	</div>
+	
+	<div data-role="main" class="ui-content">
+		<p>Select a mode:</p>
+		<ul>
+			<li><a href="#quick-playerselection">Quick</a></li>
+			<li>Advanced</li>
+		</ul>
+	</div>
+	
+	<div data-role="footer">
+		<h4></h4>
+	</div>
+</div>
+
+<!--
+	Quick Player/Team Selection
+	This screen gives the user an option to either the number of players
+	and or number of teams and players per team
+-->
+<div id="quick-playerselection" data-role="page">
+	<div data-role="header">
+		<h1>Bracket</h1>
+	</div>
+	
+	<div data-role="main" class="ui-content">
+		<label for="players">Number of Players:</label>
+		<input name="players" id="players" type="number" value="0"/>
+		<br />
+		<label for="teamsize">Players per team:</label>
+		<select name="teamsize" id="teamsize">
+			<option value="1">1</option>
+			<option value="3">2</option>
+			<option value="3">3</option>
+			<option value="4">4</option>
+			<option value="5">5</option>
+			<option value="6">6</option>
+			<option value="7">7</option>
+			<option value="8">8</option>
+			<option value="9">9</option>
+			<option value="10">10</option>
+		</select>
+		<br />
+		<div id="teamnumbers" class="disabled-text">
+			Number of teams:
+		</div>
+		<br />
+		<a class="ui-btn ui-corner-all" href="#quick-teamassignment">Next</a>
+	</div>
+	
+	<div data-role="footer">
+	</div>
+</div>
+
+<!--
+	Team Assignment Selection
+	This screen asks how the user wants to handle team assignment - list or
+	picture
+-->
+<div id="quick-teamassignment" data-role="page">
+	<div data-role="header">
+		<h1>Bracket</h1>
+	</div>
+	
+	<div data-role="main" class="ui-content">
+		Quick Team Assigment
+		<ul>
+			<li><a href="#picture-assign">Picture</a></li>
+			<li>List</li>
+		</ul>
+	</div>
+	
+	<div data-role="footer">
+	</div>
+</div>
+
+<div id="picture-assign" data-role="page">
+	<div data-role="header">
+		<h1>Bracket</h1>
+	</div>
+	
+	<div data-role="main" class="ui-content">
+		Picture Assignment
+    <button onclick="capturePhoto();">Capture Photo</button> <br>
+    <button onclick="capturePhotoEdit();">Capture Editable Photo</button> <br>
+    <button onclick="getPhoto(pictureSource.PHOTOLIBRARY);">From Photo Library</button><br>
+    <button onclick="getPhoto(pictureSource.SAVEDPHOTOALBUM);">From Photo Album</button><br>
+    <img style="display:none;width:60px;height:60px;" id="smallImage" src="" />
+    <img style="display:none;" id="largeImage" src="" />		
+		<br />
+		<a class="ui-btn ui-corner-all" href="#verify-assign">Next</a>
+	</div>
+	
+	<div data-role="footer">
+	</div>
+</div>
+
+<div id="list-assign" data-role="page">
+	<div data-role="header">
+		<h1>Bracket</h1>
+	</div>
+	
+	<div data-role="main" class="ui-content">
+		List Assignment
+	</div>
+	
+	<div data-role="footer">
+	</div>
+</div>
+
+<div id="verify-assign" data-role="page">
+	<div data-role="header">
+		<h1>Bracket</h1>
+	</div>
+	
+	<div data-role="main" class="ui-content">
+		Verify Assignment
+		<br />
+		<a class="ui-btn ui-corner-all" href="#verify-bracket">Create Bracket</a>
+	</div>
+	
+	<div data-role="footer">
+	</div>
+</div>
+
+<div id="verify-bracket" data-role="page">
+	<div data-role="header">
+		<h1>Bracket</h1>
+	</div>
+	
+	<div data-role="main" class="ui-content">
+		Verify Bracket
+		<br />
+		<a class="ui-btn ui-corner-all" href="#finished-bracket">View Bracket</a>
+	</div>
+	
+	<div data-role="footer">
+	</div>
+</div>
+
+<div id="finished-bracket" data-role="page">
+	<div data-role="header">
+		<h1>Bracket</h1>
+	</div>
+	
+	<div data-role="main" class="ui-content">
+		Finished Bracket
+	</div>
+	
+	<div data-role="footer">
+	</div>
+</div>
+
+</body>
+</html>
