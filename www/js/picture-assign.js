@@ -6,7 +6,7 @@ $(document).ready(function(){
 
     // Wait for Cordova to connect with the device
     //
-    document.addEventListener("deviceready",onDeviceReady,false);
+    //document.addEventListener("deviceready",onDeviceReady,false);
 
     // Cordova is ready to be used!
     //
@@ -60,21 +60,6 @@ $(document).ready(function(){
 		};
 		image.src = "data:image/jpeg;base64," + imageData;
     }
-    
-    function addPlayer()
-    {
-    	if(players.length < totalPlayers)
-    	{
-    		//Assign player
-    		
-    		
-    	} else {
-    		//Player assignment complete
-    	}
-    	console.log("totalPlayers:" + totalPlayers);
-    	console.log("playersPerTeam:" + playersPerTeam);
-    	//players.push();
-    }
 
     // A button will call this function
     function capturePhoto() {
@@ -88,6 +73,19 @@ $(document).ready(function(){
       alert('Failed because: ' + message);
     }
     
+	function addPlayer()
+	{
+		ret = assignPlayer();
+		console.log("assigning Player - ret:" + ret);
+		if(ret)
+		{
+			console.log("Printing result");
+			$("#picture-assign-team").html(ret.team.name);
+		} else {
+			$("#picture-assign-team").html("Done!");
+		}
+	}
+	
     $("#picture-assign-capturePhoto").click(capturePhoto);
     
     $("#picture-assign-assignPlayer").click(addPlayer);
