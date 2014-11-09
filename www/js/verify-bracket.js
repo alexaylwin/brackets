@@ -1,63 +1,71 @@
 $(document).ready(function(){
 	function createBracket(){
-		var seDisplay = $("#verify-bracket-se");
-		var rrDisplay = $("#verify-bracket-rr");
-		
-		rrGroups = [];
-		
-		if( (teams.length % 4) == 0)
+		var bracketConfig = bracketConfigs[teams.length];
+		var b = new Bracket();
+		b.init(bracketConfig);
+
+		var availableTeams = teams;
+		for(var i = 0; i < b.roundRobin.length; i++)
 		{
-			console.log("RR groups of 4");
-			totalGroups = teams.length / 4;
-			for(i = 0; i < totalGroups; i++)
+			for(var j = 0; j < b.roundRobin[i].length; j++)
 			{
-				rrGroups.push([]);
+				var ct = getRandomInt(0, availableTeams.length - 1);
+				b.roundRobin[i][j] = availableTeams[ct];
+				availableTeams.splice(ct, 1);
 			}
-			console.log("total groups:" + rrGroups.length);
-			for(i = 0; i < teams.length; i++)
-			{
-				//WILL NOT WORK FOR 4 TOTAL TEAMS?
-				var availableGroups = [];
-				for(j = 0; j < rrGroups.length; j++)
-				{
-					if(rrGroups[j].length < 4)
-					{
-						console.log("group " + j + " available");
-						availableGroups.push(j);
-					}
-				}
-				
-				group = getRandomInt(0, availableGroups.length-1);
-				console.log("group:" + availableGroups[group]);
-				rrGroups[availableGroups[group]].push(teams[i]);
-				console.log("Added team " + teams[i].name + " to rr group " + group);
-			}
-		} 
-		/**else if((teams.length % 2) == 0) {
-			
-			console.log("RR groups of 3");
-			totalGroups = teams.length / 3;
-			for(i = 0; i < teams.length; i++) {
-				rrGroups.push([]);
-			}
-			console.log("total groups:" + rrGroups.length);
-			for(i = 0; i < teams.length; i++) {
-				
-			}
-						
-		}**/
-		
-		var seTier1;
-		
-		for(i = 0; i < rrGroups.length; i++) {
-			rrDisplay.append("<div style=\"margin-left:8px;\">Group " + i + "</div>");
-			rrDisplay.append("<ul class=\"rr-list\">");
-			for(j = 0; j < rrGroups[i].length; j++){
-				rrDisplay.find("ul").append("<li>Team "+rrGroups[i][j].name+"</li>");
-			}
-			rrDisplay.append("</ul><br/>");
 		}
 		
+		for(var i = 0; i < b.singleElimination.length; i++)
+		{
+			for(var j = 0; j < b.singleElimination[i].length; j++)
+			{
+				if(i == 0)
+				{
+					var teamA = new Team(playersPerTeam, bracketConfig.singleEliminationMatches[j].teamA);
+					var teamB = new Team(playersPerTeam, bracketConfig.singleEliminationMatches[j].teamB);
+				} else {
+					var teamA = new Team(playersPerTeam, "TBD");
+					var teamB = new Team(playersPerTeam, "TBD");
+				}
+				b.singleElimination[i][j] = new Match(teamA, teamB);
+			}
+		}
+	
+		bracket = b;
+		b.printBracket();
+		populateBracketDisplay();
+	}
+	
+	function populateBracketDisplay(){
+		var seDisplay = $("#verify-bracket-se");
+		var rrDisplay = $("#verify-bracket-rr");		
+		
+		//Populate round robin
+		var alphabetList = ["A", "B", "C", "D", "E", "F", "G", "H"];
+		for(var i = 0; i < bracket.roundRobin.length; i++)
+		{
+			rrDisplay.append('<span class="bracket-group-title">Round Robin Group ' + alphabetList[i] + '</span>');
+			rrDisplay.append('<ul class="bracket-roundrobin-group"></ul>');
+			var currentList = $(rrDisplay.find("ul")[i]);
+			for(var j = 0; j < bracket.roundRobin[i].length; j++)
+			{
+				currentList.append("<li>Team " + bracket.roundRobin[i][j].name + "</li>");
+			}
+		}
+		
+		//Populate SE bracket
+		for(var i = 0; i < bracket.singleElimination.length; i++)
+		{
+			var roundNum = i + 1;
+			seDisplay.append('<span class="bracket-group-title">Single Elimination Round ' + roundNum + '</span>' );
+			seDisplay.append('<ul class="bracket-singleelimiation-group"></ul>');
+			var currentList = $(seDisplay.find("ul")[i]);
+			for(j = 0; j < bracket.singleElimination.length; j++)
+			{
+				currentList.append("<li>" + bracket.singleElimination[i][j].teamA.name + " v.s. " + bracket.singleElimination[i][j].teamB.name + "</li>");
+			}
+		}
+
 	}
 	
 	$("#verify-assign").find(".next-button").click(createBracket);

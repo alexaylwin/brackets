@@ -11,6 +11,7 @@ var totalPlayers = 0;
 var playersPerTeam = 0;
 var assignedPlayers = 0;
 var currentPlayer = 0;
+var bracket = null;
 
 //Player class
 function Player(name)
@@ -23,15 +24,13 @@ function Team(maxPlayers, name)
 {
 	this.maxPlayers = maxPlayers;
 	this.members = [];
-	this.newPlayer = "";
 	this.name = name;
 	
-	this.addPlayer = function(){
+	this.addPlayer = function(newPlayer){
 		if(this.members.length < this.maxPlayers)
 		{
-			console.log("Player added to team [" + this.name + "]" + " player: [" + this.newPlayer.name + "]");
-			this.members.push(this.newPlayer);
-			this.newPlayer = "";
+			//console.log("Player added to team [" + this.name + "]" + " player: [" + newPlayer.name + "]");
+			this.members.push(newPlayer);
 		}
 	}
 	
@@ -50,44 +49,78 @@ function Team(maxPlayers, name)
 	}
 };
 
-
-//Assign players and create teams
-function printPlayers()
-{
-	var statusBox = $("#status");
-	for(j = 0; j < teams.length; j++)
-	{
-		console.log(console.log() + "\nTeam #" + j);
-		console.log(console.log() + "\n" + teams[j].printPlayers());
-	}
-};
-
-function getRandomInt(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-};
-
-function assignPlayer()
-{
-	//var playersInput = $("#playersInput");
-	//var pptInput = $("#pptInput");
-	//var statusBox = $("#status");
-
-	if(teams.length == 0)
-	{
-		//playersPerTeam = pptInput.val();
-		//totalPlayers = playersInput.val();
-		//playersInput.attr("disabled", "disabled");
-		//pptInput.attr("disabled", "disabled");
-		var totalTeams = totalPlayers / playersPerTeam;
-		for(i = 0; i < totalTeams; i++)
+//Bracket class
+function Bracket(){
+	this.roundRobin;
+	this.singleElimination;
+	
+	this.init = function(bracketConfig){
+		var roundRobinSizes = bracketConfig.roundRobins;
+		var singleEliminationSize = bracketConfig.singleElimination;
+		
+		//Set up round robin matches
+		this.roundRobin = new Array();
+		var emptyTeam = new Team(playersPerTeam, "-1");
+		for(var i = 0; i < roundRobinSizes.length; i++)
 		{
-			teams.push(new Team(playersPerTeam, i));
+			var rr = new Array();
+			for(j = 0; j < roundRobinSizes[i]; j++)
+			{
+				rr.push(emptyTeam);
+			}
+			this.roundRobin.push(rr);
 		}
-		console.log("Created [" + totalTeams + "] empty teams.");
-	} else {
-
+		
+		
+		//Set up single elimination matches
+		this.singleElimination = new Array();
+		
+		//singleEliminationSize is # of teams, we want # of matches
+		var se = singleEliminationSize / 2;
+		//How do we calculate the team names in these matches? 
+		//Link between RR and SE match games
+		while(se >= 1)
+		{
+			var tierArray = new Array();
+			for(var i = 0; i < se; i++)
+			{
+				tierArray.push(new Match(emptyTeam,emptyTeam));
+			}
+			this.singleElimination.push(tierArray);
+			se = se / 2;
+		}
 	}
 	
+	this.printBracket = function(){
+		console.log("Round Robin:");
+		for(var i = 0; i < this.roundRobin.length; i++)
+		{
+			for(var j = 0; j < this.roundRobin[i].length; j++)
+			{
+				console.log("Team #"+this.roundRobin[i][j].name);
+			}
+			console.log("----");
+		}
+		console.log("Single Elimination:");		
+		for(var i = 0; i < this.singleElimination.length; i++)
+		{
+			for(j = 0; j < this.singleElimination[i].length; j++)
+			{
+				console.log("Team "+this.singleElimination[i][j].teamA.name+" v.s. Team "+this.singleElimination[i][j].teamB.name+"");
+			}
+			console.log("----");
+		}
+	}
+}
+
+function Match(teamA, teamB){
+	this.teamA = teamA;
+	this.teamB = teamB;
+}
+
+//Assign players to teams
+function assignPlayer()
+{	
 	if(assignedPlayers < totalPlayers)
 	{
 		currentPlayer++;
@@ -100,9 +133,8 @@ function assignPlayer()
 			}
 		}
 		var playerTeam = getRandomInt(0, freeTeams.length-1);
-		var p = new Player(currentPlayer)
-		teams[freeTeams[playerTeam]].newPlayer = p;
-		teams[freeTeams[playerTeam]].addPlayer();
+		var p = new Player(currentPlayer) 
+		teams[freeTeams[playerTeam]].addPlayer(p);
 		assignedPlayers++;
 		console.log("Assigned player [" + p.name + "] to team [" + freeTeams[playerTeam] + "].");
 		return {player:p.name, team:teams[freeTeams[playerTeam]]};
@@ -112,17 +144,153 @@ function assignPlayer()
 	}
 };
 
+var bracketConfigs = [{},{},{},{},{
+	teams:4,
+	roundRobins:[4],
+	singleElimination:2,
+	singleEliminationMatches:[
+		{teamA:"Winner A1",
+		 teamB:"Winner A2"}
+	]
+},
+{
+	teams:5,
+	roundRobins:[5],
+	singleElimination:2,
+	singleEliminationMatches:[
+		{teamA:"Winner A1",
+		 teamB:"Winner A2"}
+	]
+},
+{
+	teams:6,
+	roundRobins:[3,3],
+	singleElimination:2,
+	singleEliminationMatches:[
+		{teamA:"Winner A",
+		 teamB:"Winner B"}
+	]
+},
+{
+	teams:7,
+	roundRobins:[3,4],
+	singleElimination:4,
+	singleEliminationMatches:[
+		{teamA:"Winner A1",
+		 teamB:"Winner A2"},
+		{teamA:"Winner B1",
+		 teamB:"Winner B2"}		 
+	]
+},
+{
+	teams:8,
+	roundRobins:[4,4],
+	singleElimination:4,
+	singleEliminationMatches:[
+		{teamA:"Winner A1",
+		 teamB:"Winner A2"},
+		{teamA:"Winner B1",
+		 teamB:"Winner B2"}		 
+	]
+},
+{
+	teams:9,
+	roundRobins:[5,4],
+	singleElimination:4,
+	singleEliminationMatches:[
+		{teamA:"Winner A1",
+		 teamB:"Winner A2"},
+		{teamA:"Winner B1",
+		 teamB:"Winner B2"}		 
+	]
+},
+{
+	teams:10,
+	roundRobins:[5,5],
+	singleElimination:4,
+	singleEliminationMatches:[
+		{teamA:"Winner A1",
+		 teamB:"Winner A2"},
+		{teamA:"Winner B1",
+		 teamB:"Winner B2"}		 
+	]
+},
+{
+	teams:11,
+	roundRobins:[3,3,3,2],
+	singleElimination:4,
+	singleEliminationMatches:[
+		{teamA:"Winner A",
+		 teamB:"Winner B"},
+		{teamA:"Winner C",
+		 teamB:"Winner D"}		 
+	]	
+	
+},
+{
+	teams:12,
+	roundRobins:[3,3,3,3],
+	singleElimination:4,
+	singleEliminationMatches:[
+		{teamA:"Winner A",
+		 teamB:"Winner B"},
+		{teamA:"Winner C",
+		 teamB:"Winner D"}		 
+	]	
+},
+{
+	teams:13,
+	roundRobins:[3,3,3,4],
+	singleElimination:4,
+	singleEliminationMatches:[
+		{teamA:"Winner A",
+		 teamB:"Winner B"},
+		{teamA:"Winner C",
+		 teamB:"Winner D"}		 
+	]	
+},
+{
+	teams:14,
+	roundRobins:[3,3,4,4],
+	singleElimination:4,
+	singleEliminationMatches:[
+		{teamA:"Winner A",
+		 teamB:"Winner B"},
+		{teamA:"Winner C",
+		 teamB:"Winner D"}		 
+	]	
+},
+{
+	teams:15,
+	roundRobins:[4,4,4,3],
+	singleElimination:4,
+	singleEliminationMatches:[
+		{teamA:"Winner A",
+		 teamB:"Winner B"},
+		{teamA:"Winner C",
+		 teamB:"Winner D"}		 
+	]	
+},
+{
+	teams:16,
+	roundRobins:[4,4,4,4],
+	singleElimination:8,
+	singleEliminationMatches:[
+		{teamA:"Winner A1",
+		 teamB:"Winner A2"},
+		{teamA:"Winner B1",
+		 teamB:"Winner B2"},
+		{teamA:"Winner C1",
+		 teamB:"Winner C2"},		 		 
+		{teamA:"Winner D1",
+		 teamB:"Winner D2"}		 
+	]	
+}];
+
 //Create bracket
+/**
 function makeBracket(t, g)
 {
-	//Pseduo Code:
-	/*
-		Initialize an array tg[t] with all teams to g games
-		For each team i, for each game j, do:
-			- If tg[i] < 4al
-			- Assign the team to play i+1
-	
-	*/
 	//INITIALIZE
 	var tg = new Array();
 	for(var i = 0; i < t; i++)
@@ -164,3 +332,4 @@ function makeBracket(t, g)
 		}
 	}	
 }
+**/

@@ -6,7 +6,7 @@ $(document).ready(function(){
 
     // Wait for Cordova to connect with the device
     //
-    //document.addEventListener("deviceready",onDeviceReady,false);
+    document.addEventListener("deviceready",onDeviceReady,false);
 
     // Cordova is ready to be used!
     //
@@ -24,21 +24,18 @@ $(document).ready(function(){
 	    	
 	    	//Get aspect ratio, aiming for 300px width
 	    	console.log(image.width + "x" + image.height);
+	    	var maxDimension = 250;
 	    	if(image.width > image.height)
 	    	{
-		    	var resizeFactor = (300/image.width);
-//		    	var newWidth = image.height * resizeFactor;
-//				var newHeight = image.width * resizeFactor; 
-		    	
+		    	var resizeFactor = (maxDimension/image.width);
+		    	console.log('resize Factor: ' + resizeFactor);		    	
 			} else {
-				var resizeFactor = (300/image.height);
+				var resizeFactor = (maxDimension/image.height);
 			}
 			var newWidth = image.width * resizeFactor;
 			var newHeight = image.height * resizeFactor;
-			
-			
-			//Swap the width and height, since we'll be rotating the image
-			console.log(newWidth + "x" + newHeight);
+			console.log('new dimensions: ' + newWidth + 'x' + newHeight);
+
 	    	//Set up canvas
 			var canvas = document.createElement("canvas");
 			var ctx = canvas.getContext("2d");
@@ -46,17 +43,16 @@ $(document).ready(function(){
 			//Draw rotated image
 			canvas.width = newHeight;
 			canvas.height = newWidth;
-	        ctx.translate(canvas.width/2, canvas.height/2);            
+	        ctx.translate(canvas.width/2, canvas.height/2);         
 	        ctx.rotate(90*(Math.PI/180));	        
-	        ctx.drawImage(image, -(newWidth/2), -(newHeight/2), newHeight, newWidth);
+	        ctx.drawImage(image, -(newWidth/2), -(newHeight/2), newWidth, newHeight);
 	        
 	        //Save image data and display on screen
 	        var imageDataRotated = canvas.toDataURL('image/jpeg'); 
 			var playerImage = document.getElementById('playerImage');
-			//playerImage.style.width = newHeight + 'px';
-			//playerImage.style.height = newWidth + 'px';
 			playerImage.src = imageDataRotated;
 			playerImage.style.display = 'block';
+			addPlayer();
 		};
 		image.src = "data:image/jpeg;base64," + imageData;
     }
@@ -76,10 +72,8 @@ $(document).ready(function(){
 	function addPlayer()
 	{
 		ret = assignPlayer();
-		console.log("assigning Player - ret:" + ret);
 		if(ret)
 		{
-			console.log("Printing result");
 			$("#picture-assign-team").html(ret.team.name);
 		} else {
 			$("#picture-assign-team").html("Done!");

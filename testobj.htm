@@ -1,0 +1,113 @@
+<html>
+<head>
+<script type="text/javascript">
+var playersPerTeam = 0;
+//Player class
+function Player(name)
+{
+	this.name = name;
+};
+
+//Team class
+function Team(maxPlayers, name)
+{
+	this.maxPlayers = maxPlayers;
+	this.members = [];
+	this.name = name;
+	
+	this.addPlayer = function(newPlayer){
+		if(this.members.length < this.maxPlayers)
+		{
+			console.log("Player added to team [" + this.name + "]" + " player: [" + newPlayer.name + "]");
+			this.members.push(newPlayer);
+		}
+	}
+	
+	
+	this.printPlayers = function(){
+		var ret = "Players: ";
+		for(i = 0; i < this.members.length; i++) {
+			ret = ret+ this.members[i].name + " ";
+		}
+		return ret;
+	}
+	
+	this.hasFreeSpot = function(){
+		console.log("Free spot on team [" + this.name + "] - players: [" + this.members.length + "]/["+this.maxPlayers+"]");
+		return this.members.length < this.maxPlayers;
+	}
+};
+
+//Bracket class
+function Bracket(){
+	this.roundRobin;
+	this.singleElimination;
+	
+	this.init = function(roundRobinSizes, singleEliminationSize){
+		this.roundRobin = new Array();
+		var emptyTeam = new Team(playersPerTeam, -1);
+		
+		for(var i = 0; i < roundRobinSizes.length; i++)
+		{
+			var rr = new Array();
+			for(j = 0; j < roundRobinSizes[i]; j++)
+			{
+				rr.push(emptyTeam);
+			}
+			this.roundRobin.push(rr);
+		}
+		
+		this.singleElimination = new Array();
+		//singleEliminationSize is # of teams, we want # of matches
+		var se = singleEliminationSize / 2;
+		while(se >= 1)
+		{
+			var tier = new Array();
+			for(var i = 0; i < se; i++)
+			{
+				tier.push(new Match(emptyTeam,emptyTeam));
+			}
+			this.singleElimination.push(tier);
+			se = se / 2;
+		}
+	}
+	
+	this.printBracket = function(){
+		document.write("Round Robin:");
+		for(var i = 0; i < this.roundRobin.length; i++)
+		{
+			document.write("<ul>");
+			for(var j = 0; j < this.roundRobin[i].length; j++)
+			{
+				document.write("<li>Team #"+this.roundRobin[i][j].name+"</li>");
+			}
+			document.write("</ul>");
+		}
+		document.write("<br />Single Elimination:");		
+		for(var i = 0; i < this.singleElimination.length; i++)
+		{
+			document.write("<ul>");
+			for(j = 0; j < this.singleElimination[i].length; j++)
+			{
+				document.write("<li>Team #"+this.singleElimination[i][j].teamA.name+" v.s. Team #"+this.singleElimination[i][j].teamB.name+"</li>");
+			}
+			document.write("</ul>");
+		}
+	}
+}
+
+function Match(teamA, teamB){
+	this.teamA = teamA;
+	this.teamB = teamB;
+}
+
+
+var b = new Bracket();
+b.init(new Array(3,3,3,4), 8);
+b.printBracket();
+</script>
+</head>
+<body>
+
+</body>
+</html>
