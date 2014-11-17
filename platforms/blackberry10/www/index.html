@@ -4,12 +4,15 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="vendor/jquery.mobile-1.4.4/jquery.mobile-1.4.4.css"/>
 	<link rel="stylesheet" href="css/custom.css"/>
+	<link rel="stylesheet" href="css/components.css"/>
+	<link rel="stylesheet" href="vendor/font-awesome-4.2.0/css/font-awesome.css">
 	
 	<script src="vendor/jquery-2.1.1.js" type="text/javascript"></script>
 	<script src="vendor/jquery.mobile-1.4.4/jquery.mobile-1.4.4.js" type="text/javascript"></script>
 	<script src="bracket.js" type="text/javascript"></script>
 	
 	<script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+
 	<script type="text/javascript" src="js/util.js"></script>
 	<script type="text/javascript" src="js/common.js"></script>
 
@@ -39,6 +42,7 @@
 <div id="quick-playerselection" data-role="page">
 	<div data-role="header">
 		<h1>Bracket</h1>
+		<a href="#home" class="header-button ui-btn-right" ><i class="fa fa-home fa"></i></a>
 	</div>
 	
 	<div data-role="main" class="ui-content">
@@ -78,13 +82,16 @@
 -->
 <div id="quick-teamassignment" data-role="page">
 	<div data-role="header">
-		<h1>Bracket <a href="#home" class="header-back-button">[Back]</a></h1>
+		<h1>Bracket</h1>
+		<a href="#home" class="header-button ui-btn-right" ><i class="fa fa-home fa"></i></a>
 	</div>
 	
 	<div data-role="main" class="ui-content">
 		Quick Team Assigment
 		<a class="ui-btn ui-corner-all next-button" href="#picture-assign">Picture</a>
 		<br />
+		<a class="ui-btn ui-corner-all next-button" href="#quick-assign">Quick</a>
+		<br />		
 		<a class="ui-btn ui-corner-all next-button">List</a>
 	</div>
 	
@@ -96,24 +103,18 @@
 <div id="picture-assign" data-role="page">
 	<div data-role="header">
 		<h1>Bracket</h1>
+		<a href="#home" class="header-button ui-btn-right" ><i class="fa fa-home fa"></i></a>
 	</div>
 	
 	<div data-role="main" class="ui-content">
-		<div style="text-align:center">
-			<div id="photoframe" style="margin-left:auto; margin-right:auto; display:inline-block;">
-				<img style="display:none;" id="playerImage" src="" />
-			</div>
+		<div id="photoframe">
+			<img id="playerImage" src="img/placeholder.gif" />
 		</div>
-		<div id="picture-assign-team" 
-			style="margin-left:auto; margin-right:auto;font-size:80px;text-align:center;">
+		<div id="picture-assign-team">
+			Take a picture to assign a team!
 		</div>
-		<div id="picture-assign-capturePhoto" class="round-image-button"><span>GO</span></div>
-<!--	    
-	    <button id="picture-assign-capturePhoto" class="round-image" style="">Take Picture</button>
-		<div id="picture-assign-team" style="width:border:1px solid black; 300px; height:300px; margin-left:auto; margin-right:auto;font-size:100px;text-align:center;"></div>
-	    <button id="picture-assign-assignPlayer" class="round-image">Assign Player</button> <br>
--->
-
+		<div id="picture-assign-capturePhoto" class="round-image-button"><a href="#"><i class="fa fa-camera fa-2x"></i></a></div>
+		<br />
 		<a class="ui-btn ui-corner-all next-button" href="#verify-assign">Next</a>
 	</div>
 	
@@ -123,9 +124,31 @@
 	<script type="text/javascript" src="js/verify-assign.js"></script>
 </div>
 
+<div id="quick-assign" data-role="page">
+	<div data-role="header">
+		<h1>Bracket</h1>
+		<a href="#home" class="header-button ui-btn-right" ><i class="fa fa-home fa"></i></a>
+	</div>
+	
+	<div data-role="main" class="ui-content">
+		<div id="quick-assign-team">
+			Click to assign a player!
+		</div>
+		<button id="quick-assign-assignPlayer" class="round-image">Assign Player</button> <br>
+		<br />
+		<a class="ui-btn ui-corner-all next-button" href="#verify-assign">Next</a>
+	</div>
+	
+	<div data-role="footer">
+	</div>
+	<script type="text/javascript" src="js/quick-assign.js"></script>
+	<script type="text/javascript" src="js/verify-assign.js"></script>
+</div>
+
 <div id="list-assign" data-role="page">
 	<div data-role="header">
 		<h1>Bracket</h1>
+		<a href="#home" class="header-button ui-btn-right" ><i class="fa fa-home fa"></i></a>
 	</div>
 	
 	<div data-role="main" class="ui-content">
@@ -139,6 +162,7 @@
 <div id="verify-assign" data-role="page">
 	<div data-role="header">
 		<h1>Bracket</h1>
+		<a href="#home" class="header-button ui-btn-right" ><i class="fa fa-home fa"></i></a>
 	</div>
 	
 	<div data-role="main" class="ui-content">
@@ -159,6 +183,7 @@
 <div id="verify-bracket" data-role="page">
 	<div data-role="header">
 		<h1>Bracket</h1>
+		<a href="#home" class="header-button ui-btn-right" ><i class="fa fa-home fa"></i></a>
 	</div>		
 	
 	<div data-role="main" class="ui-content">
@@ -183,6 +208,7 @@
 <div id="finished-bracket" data-role="page">
 	<div data-role="header">
 		<h1>Bracket</h1>
+		<a href="#home" class="header-button ui-btn-right" ><i class="fa fa-home fa"></i></a>
 	</div>
 	
 	<div data-role="main" class="ui-content">

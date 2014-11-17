@@ -144,6 +144,16 @@ function assignPlayer()
 	}
 };
 
+function allPlayersAssigned()
+{
+	if(assignedPlayers < totalPlayers)
+	{
+		return false;
+	} else {
+		return true;
+	}
+}
+
 var bracketConfigs = [{},{},{},{},{
 	teams:4,
 	roundRobins:[4],

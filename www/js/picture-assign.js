@@ -59,9 +59,16 @@ $(document).ready(function(){
 
     // A button will call this function
     function capturePhoto() {
-      // Take picture using device camera and retrieve image as base64-encoded string
-      navigator.camera.getPicture(onPhotoDataSuccess, onFail, { quality: 50,
-        destinationType: destinationType.DATA_URL, correctOrientation: true, targetWidth:300});
+    	if(!allPlayersAssigned())
+    	{
+	    	$("#picture-assign-capturePhoto").addClass("disabled");
+	    	$("#picture-assign-capturePhoto > a").off("touchstart");
+			// Take picture using device camera and retrieve image as base64-encoded string
+			navigator.camera.getPicture(onPhotoDataSuccess, onFail, { quality: 50,
+				destinationType: destinationType.DATA_URL, correctOrientation: true, targetWidth:300});
+		} else {
+			addPlayer();
+		}
     }
     // Called if something bad happens.
     // 
@@ -74,14 +81,15 @@ $(document).ready(function(){
 		ret = assignPlayer();
 		if(ret)
 		{
-			$("#picture-assign-team").html(ret.team.name);
+			$("#picture-assign-team").html("Team " + ret.team.name);
+			$("#picture-assign-capturePhoto > a").bind('touchstart', capturePhoto);
+			$("#picture-assign-capturePhoto").removeClass("disabled");
+			
 		} else {
-			$("#picture-assign-team").html("Done!");
+			$("#picture-assign-team").html("Teams Done!");
 		}
 	}
 	
-    $("#picture-assign-capturePhoto").click(capturePhoto);
-    
-    $("#picture-assign-assignPlayer").click(addPlayer);
+    $("#picture-assign-capturePhoto > a").bind('touchstart', capturePhoto);
 });
 
