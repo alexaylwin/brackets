@@ -1,7 +1,7 @@
 $(document).ready(function(){
 	function populateTeamDisplay(){
 		var display = $("#verify-assign-teamDisplay");
-		display.html("");
+		display.empty();
 		for(i = 0; i < teams.length; i++){
 			var li = "<li> Team #" + teams[i].name + ": ";
 			for(j = 0; j < teams[i].members.length; j++){
@@ -13,4 +13,5 @@ $(document).ready(function(){
 	}
 	
 	$("#picture-assign").find(".next-button").click(populateTeamDisplay);
+	$("#quick-assign").find(".next-button").click(populateTeamDisplay);
 });
